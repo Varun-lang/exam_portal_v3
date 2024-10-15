@@ -1,0 +1,39 @@
+.welcome-container {
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    #acb6e5 100%
+  ); /* Gradient background */
+}
+
+.text-center {
+  position: relative;
+  z-index: 2; /* Ensure text is above any background effects */
+}
+
+.btn {
+  border-radius: 25px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-warning:hover {
+  background-color: #e0a800; /* Darker yellow on hover */
+  transform: scale(1.05);
+}
+
+.btn-dark:hover {
+  background-color: #343a40; /* Darker gray on hover */
+  transform: scale(1.05);
+}
+
+.card {
+  border-radius: 20px;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}

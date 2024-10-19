@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaUserGraduate, FaUserShield } from "react-icons/fa";
 import "./css/Welcome.css"; // Import custom CSS
 import { useNavigate } from "react-router";
+import LogoutC from "./LogoutC";
 
-function Welcome({ name }) {
+function Welcome({ name, role }) {
   const navigate = useNavigate();
 
-  function HandleAdmin() {
+  function handleAdmin() {
     navigate("/admin");
   }
 
-  function HandleStudent() {
+  function handleStudent() {
     navigate("/student");
-    // navigate("/student", { state: name });
   }
 
   return (
@@ -25,22 +25,45 @@ function Welcome({ name }) {
         <h1 className="mb-4 display-4 text-primary">Welcome {name}</h1>
         <h2 className="mb-4 text-secondary">Select your role:</h2>
         <div className="d-flex justify-content-center">
-          <button
-            className="btn btn-warning me-2 btn-lg role-button"
-            onClick={HandleStudent}
-          >
-            <FaUserGraduate className="me-2" />
-            Student
-          </button>
-          <button
-            className="btn btn-dark btn-lg role-button"
-            onClick={HandleAdmin}
-          >
-            <FaUserShield className="me-2" />
-            Admin
-          </button>
+          {role === "ROLE_SUPER_ADMIN" && (
+            <>
+              <button
+                className="btn btn-warning me-2 btn-lg role-button"
+                onClick={handleStudent}
+              >
+                <FaUserGraduate className="me-2" />
+                Student
+              </button>
+              <button
+                className="btn btn-dark btn-lg role-button"
+                onClick={handleAdmin}
+              >
+                <FaUserShield className="me-2" />
+                Admin
+              </button>
+            </>
+          )}
+          {role === "ROLE_ADMIN" && (
+            <button
+              className="btn btn-dark btn-lg role-button"
+              onClick={handleAdmin}
+            >
+              <FaUserShield className="me-2" />
+              Admin
+            </button>
+          )}
+          {role === "ROLE_USER" && (
+            <button
+              className="btn btn-warning btn-lg role-button"
+              onClick={handleStudent}
+            >
+              <FaUserGraduate className="me-2" />
+              Student
+            </button>
+          )}
         </div>
       </div>
+      <LogoutC />
     </div>
   );
 }

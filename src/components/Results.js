@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Card from "react-bootstrap/Card"; // Import Card from react-bootstrap
 import baseUrl from "./api/bootApi";
 import { useNavigate } from "react-router";
+import LogoutC from "./LogoutC";
 
 function Results() {
   const [quizNames, setQuizNames] = useState([]); // State to hold quiz names

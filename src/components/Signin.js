@@ -1,6 +1,7 @@
 import axios from "axios";
 import { React, useState } from "react";
 import baseUrl from "./api/bootApi";
+import { toast, ToastContainer } from "react-toastify";
 
 function Signin() {
   const [formData, setFormData] = useState({
@@ -19,17 +20,21 @@ function Signin() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
     postDataToServer(formData);
   };
 
   const postDataToServer = (data) => {
     axios.post(`${baseUrl}/v2/signUp`, data).then(
       (response) => {
-        alert(response.data);
+        toast.success(response.data);
+        setFormData({
+          username: "",
+          email: "",
+          password: "",
+        });
       },
       (error) => {
-        alert("Already Signed Up! Please Login");
+        toast.error("Already Signed Up! Please Login");
       }
     );
   };
@@ -94,6 +99,7 @@ function Signin() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }

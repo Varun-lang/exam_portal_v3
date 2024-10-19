@@ -2,6 +2,8 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import baseUrl from "./api/bootApi";
+import LogoutC from "./LogoutC";
+import { toast, ToastContainer } from "react-toastify";
 
 const QuestionForm = () => {
   const { quizName } = useParams();
@@ -34,10 +36,10 @@ const QuestionForm = () => {
       })
       .then(
         (response) => {
-          alert("Saved");
+          toast.success("Saved");
         },
         (error) => {
-          alert("Some error occurred");
+          toast.error("Some error occurred! Try Again");
         }
       );
   };
@@ -136,6 +138,7 @@ const QuestionForm = () => {
           </button>
         </div>
       </form>
+      <ToastContainer />
     </div>
   );
 };

@@ -1,12 +1,13 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router";
 import baseUrl from "./api/bootApi";
+import LogoutC from "./LogoutC";
 
 const QuizPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const quizName = location.state; // Assuming quizName is passed through state
+  const quizName = location.state;
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -15,7 +16,8 @@ const QuizPage = () => {
   const [isQuizActive, setIsQuizActive] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [warningCount, setWarningCount] = useState(0);
-  const [showModal, setShowModal] = useState(false); // New state for modal
+  const [showModal, setShowModal] = useState(false);
+  const scoreUpdatedRef = useRef(false); // Using a ref to track score updates
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -24,7 +26,6 @@ const QuizPage = () => {
           params: { quizName },
         });
         setQuestions(response.data);
-
         if (response.data.length > 0) {
           setQuizTimer(response.data[0].quizTimer * 60);
           setIsQuizActive(true);
@@ -44,17 +45,7 @@ const QuizPage = () => {
         setQuizTimer((prevTime) => {
           if (prevTime <= 1) {
             clearInterval(timer);
-            setIsQuizActive(false);
-            setQuizCompleted(true);
-            setShowModal(true); // Show modal when time is up
-
-            setTimeout(() => {
-              navigate("/login", {
-                state: { message: "Thanks for attempting the quiz!" },
-                replace: true,
-              });
-            }, 3500);
-
+            endQuiz("timer");
             return 0;
           }
           return prevTime - 1;
@@ -63,7 +54,7 @@ const QuizPage = () => {
     }
 
     return () => clearInterval(timer);
-  }, [isQuizActive, quizTimer, navigate]);
+  }, [isQuizActive, quizTimer]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -73,7 +64,6 @@ const QuizPage = () => {
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
-
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
@@ -90,18 +80,13 @@ const QuizPage = () => {
     handleNextQuestion();
   };
 
-  function saveAnswerToServer(id, answer, quizName) {
-    return axios
-      .post(`${baseUrl}/v2/saveStudentAnswer`, { id, answer, quizName })
-      .then(
-        (response) => {
-          console.log(response);
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-  }
+  const saveAnswerToServer = (id, answer, quizName) => {
+    return axios.post(`${baseUrl}/v2/saveStudentAnswer`, {
+      id,
+      answer,
+      quizName,
+    });
+  };
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
@@ -109,26 +94,28 @@ const QuizPage = () => {
       setSubmitted(false);
       setSelectedOption(null);
     } else {
-      setQuizCompleted(true);
-      setIsQuizActive(false);
-      updateScore(quizName, warningCount);
-      setShowModal(true); // Show modal upon quiz completion
-      setTimeout(() => {
-        navigate("/login", {
-          state: { message: "Thanks for attempting the quiz!" },
-          replace: true,
-        });
-      }, 3500);
+      endQuiz("completed");
     }
   };
 
-  if (questions.length === 0) {
-    return <div className="text-center">Loading...</div>;
-  }
+  const endQuiz = (reason) => {
+    setIsQuizActive(false);
+    setQuizCompleted(true);
+    // Update score only once based on the quiz end reason
+    if (!scoreUpdatedRef.current) {
+      updateScore(quizName, warningCount);
+      scoreUpdatedRef.current = true; // Set the ref to true
+    }
+    setShowModal(true);
+    setTimeout(() => {
+      navigate("/login", {
+        state: { message: "Thanks for attempting the quiz!" },
+        replace: true,
+      });
+    }, 3500);
+  };
 
-  const currentQuestion = questions[currentQuestionIndex];
-
-  function updateScore(quizName, warning) {
+  const updateScore = (quizName, warning) => {
     const params = new URLSearchParams();
     params.append("quizName", quizName);
     params.append("warning", warning);
@@ -140,7 +127,13 @@ const QuizPage = () => {
         console.log(error);
       }
     );
+  };
+
+  if (questions.length === 0) {
+    return <div className="text-center">Loading...</div>;
   }
+
+  const currentQuestion = questions[currentQuestionIndex];
 
   return (
     <div className="container mt-5">

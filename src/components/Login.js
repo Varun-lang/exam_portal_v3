@@ -3,10 +3,13 @@ import React, { useState } from "react";
 import baseUrl from "./api/bootApi";
 import Welcome from "./Welcome";
 import "./css/Login.css"; // Import custom CSS
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import the CSS for toast notifications
 
 function Login() {
   const [currentComponent, setCurrentComponent] = useState("form");
   const [name, setName] = useState("");
+  const [role, setRole] = useState(""); // State for user role
 
   const [formData, setFormData] = useState({
     email: "",
@@ -33,14 +36,20 @@ function Login() {
       .then(
         (response) => {
           setName(response.data);
+          getRole(); // Fetch user role after successful login
           setCurrentComponent("myComponent");
         },
         (error) => {
-          console.log(error);
-          alert(error.response.data);
+          toast.error(error.response.data); // Show toast error message
         }
       );
   };
+
+  function getRole() {
+    axios.get(`${baseUrl}/v2/getloggedRole`).then((response) => {
+      setRole(response.data); // Assuming the response contains the role
+    });
+  }
 
   return (
     <div className="login-container d-flex justify-content-center align-items-center vh-100">
@@ -88,8 +97,9 @@ function Login() {
           </form>
         </div>
       ) : (
-        <Welcome name={name} />
+        <Welcome name={name} role={role} /> /*{ Pass the role to Welcome }*/
       )}
+      <ToastContainer /> {/* Place the ToastContainer here */}
     </div>
   );
 }

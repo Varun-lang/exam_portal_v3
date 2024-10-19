@@ -11,6 +11,8 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
+import LogoutC from "./LogoutC";
+import { toast, ToastContainer } from "react-toastify";
 
 function ViewResult() {
   const location = useLocation();
@@ -95,7 +97,7 @@ function ViewResult() {
       })
       .catch((error) => {
         console.error("Error exporting results:", error);
-        alert("Failed to export results.");
+        toast.error("Failed to export results. Try Again!");
       });
   };
 
@@ -149,6 +151,8 @@ function ViewResult() {
       ) : (
         !loading && <Alert variant="info">No score data available.</Alert>
       )}
+      <LogoutC />
+      <ToastContainer />
     </Container>
   );
 }

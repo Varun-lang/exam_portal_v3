@@ -4,6 +4,8 @@ import { Container, Card, Row, Col, Button, CardBody } from "reactstrap";
 import baseUrl from "./api/bootApi";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router";
+import LogoutC from "./LogoutC";
+import { toast, ToastContainer } from "react-toastify";
 
 function StudentHome() {
   const navigate = useNavigate();
@@ -37,7 +39,7 @@ function StudentHome() {
     if (v === true) {
       navigate("/quiz-page", { state: quizName });
     } else {
-      alert("You have already attempted this Quiz!!");
+      toast.warning("You have already attempted this Quiz!!");
     }
   };
 
@@ -72,6 +74,8 @@ function StudentHome() {
           </Col>
         ))}
       </Row>
+      <LogoutC />
+      <ToastContainer />
     </Container>
   );
 }

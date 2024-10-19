@@ -12,6 +12,7 @@ import Timer from "./components/Timer";
 import StudentHome from "./components/StudentHome";
 import QuizPage from "./components/QuizPage";
 import ViewResult from "./components/ViewResult";
+import About from "./components/About";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/student" Component={StudentHome} exact />
           <Route path="/quiz-page" Component={QuizPage} exact />
           <Route path="/ViewResult" Component={ViewResult} exact />
+          <Route path="/about" Component={About} exact />
         </Routes>
       </Router>
     </>

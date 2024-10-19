@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Row,
@@ -14,12 +14,26 @@ import Timer from "./Timer";
 import Results from "./Results";
 import Panel from "./Panel";
 import ManageUser from "./ManageUser";
+import baseUrl from "./api/bootApi";
+import axios from "axios";
+import LogoutC from "./LogoutC";
 
 function Admin() {
   const [componentToShow, setComponentToShow] = useState(null);
+  const [role, setRole] = useState(""); // State for user role
+
+  useEffect(() => {
+    getRole();
+  }, []);
 
   function ShowComp(component) {
     setComponentToShow(component);
+  }
+
+  function getRole() {
+    axios.get(`${baseUrl}/v2/getloggedRole`).then((response) => {
+      setRole(response.data); // Assuming the response contains the role
+    });
   }
 
   const renderComponent = () => {
@@ -31,7 +45,7 @@ function Admin() {
       case "SR":
         return <Results />;
       case "MU":
-        return <ManageUser />;
+        return <ManageUser role={role} />;
       default:
         return <Panel />;
     }
@@ -88,6 +102,7 @@ function Admin() {
           </Card>
         </Col>
       </Row>
+      <LogoutC />
     </Container>
   );
 }

@@ -6,6 +6,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Card from "react-bootstrap/Card"; // Import Card from react-bootstrap
 import baseUrl from "./api/bootApi";
 import { useNavigate } from "react-router";
+import { toast, ToastContainer } from "react-toastify";
 
 function VerifyQuiz() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ function VerifyQuiz() {
     const normalizedInputQuizName = inputQuizName.trim().toLowerCase();
 
     if (normalizedInputQuizName === "") {
-      alert("Quiz Name can't be empty!");
+      toast.error("Quiz Name can't be empty!");
     } else {
       // Normalize quizNames for comparison
       const normalizedQuizNames = quizNames.map((name) =>
@@ -39,7 +40,9 @@ function VerifyQuiz() {
       );
 
       if (normalizedQuizNames.includes(normalizedInputQuizName)) {
-        alert("This quiz already exists. Please choose a different name.");
+        toast.error(
+          "This quiz already exists. Please choose a different name."
+        );
       } else {
         // Call createQuiz with quizName in props
         navigate(`/questionForm/${inputQuizName}`);
@@ -78,6 +81,7 @@ function VerifyQuiz() {
           </Card>
         ))}
       </div>
+      <ToastContainer />
     </div>
   );
 }

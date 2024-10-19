@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import baseUrl from "./api/bootApi";
 import { Container, Card, Row, Col, Button, Input } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { toast, ToastContainer } from "react-toastify";
 
 function Timer() {
   const [quizNames, setQuizNames] = useState([]);
@@ -40,11 +41,11 @@ function Timer() {
     params.append("quizName", quizName);
     params.append("time", timerValue);
     if (timerValue < 1) {
-      alert("Timer should be greater than 0");
+      toast.error("Timer should be greater than 0");
     } else {
       axios.post(`${baseUrl}/v2/addTimer`, params).then(
         (response) => {
-          alert("Value Updated Successfully");
+          toast.success("Value Updated Successfully");
           // Reset the timer value after successful submission
           setTimerValues((prevValues) => ({
             ...prevValues,
@@ -90,6 +91,7 @@ function Timer() {
           </Col>
         ))}
       </Row>
+      <ToastContainer />
     </Container>
   );
 }

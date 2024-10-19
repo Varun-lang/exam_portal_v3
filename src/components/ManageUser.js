@@ -1,8 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import baseUrl from "./api/bootApi";
+import { toast, ToastContainer } from "react-toastify";
 
-const ManageUser = () => {
+const ManageUser = ({ role }) => {
+  console.log(role);
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]); // State to hold roles
   const [loading, setLoading] = useState(true); // State for loading status
@@ -37,9 +39,6 @@ const ManageUser = () => {
 
     const isActive = selectedStatus === "active"; // Convert to boolean
 
-    console.log(`Submitting for user: ${email}`);
-    console.log(`Selected Role ID: ${selectedRoleId}, Status: ${isActive}`);
-
     // Update user data on the server
     try {
       const params = new URLSearchParams();
@@ -48,11 +47,19 @@ const ManageUser = () => {
       params.append("status", isActive);
 
       await axios.post(`${baseUrl}/v2/updateUser`, params);
-      alert("User updated successfully!");
+      toast.success("User updated successfully!");
     } catch (error) {
-      console.error("Error updating user:", error);
+      toast.error("Error updating user:", error);
     }
   };
+
+  if (role !== "ROLE_SUPER_ADMIN") {
+    return (
+      <div className="alert alert-danger" role="alert">
+        You are not authorized to access this page.
+      </div>
+    );
+  }
 
   if (loading) {
     return <div>Loading...</div>; // Show loading state
@@ -123,6 +130,7 @@ const ManageUser = () => {
           ))}
         </tbody>
       </table>
+      <ToastContainer />
     </div>
   );
 };
